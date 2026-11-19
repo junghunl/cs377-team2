@@ -1,0 +1,72 @@
+# Final experiments (2026-11-19, user, after the team meeting): seeds 0-9.
+#   envs      : ICR-RL CartPole 50k, ICR-RL MountainCar 50k, ICR-RL Acrobot 150k, LunarLander 100k (rl-zoo DQN)
+#   algorithms: DQN | best (double rmix K=10 warm margin clip) | best + explore (teacher action on epsilon steps)
+#   gating    : constant | adaptive (check every 5% of the budget, 5 episodes each, strict student > teacher,
+#               g *= 0.5 per pass, off after 3 passes in a row, no t_max cap)
+#   TabPFN    : 3.5 (tabpfn 9.2.0) | 2.0.9 (pip tabpfn==2.0.9, conda env tabpfn209)
+# Student = plain DQN everywhere. Results: results/final/<env>/<variant>/s<seed>.
+# Split over two servers: final_a.yaml (CartPole, Acrobot) and final_b.yaml (MountainCar, LunarLander).
+name: final
+seeds: 0-9
+envs: [conf/envs/icr_mountaincar.yaml, conf/envs/lunarlander.yaml]
+variants:
+  dqn:
+    files: []
+  best_const_tp35:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: '3.5'
+      gate: {name: constant}
+      paths: &id001
+      - {name: margin, weight: 1.0, margin: 0.8}
+  best_adapt_tp35:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: '3.5'
+      gate: {name: adaptive}
+      paths: *id001
+  best_exp_const_tp35:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: '3.5'
+      gate: {name: constant}
+      paths: &id002
+      - {name: explore, weight: 1.0}
+      - {name: margin, weight: 1.0, margin: 0.8}
+  best_exp_adapt_tp35:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: '3.5'
+      gate: {name: adaptive}
+      paths: *id002
+  best_const_tp209:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: 2.0.9
+      gate: {name: constant}
+      paths: &id003
+      - {name: margin, weight: 1.0, margin: 0.8}
+    python: tabpfn209
+  best_adapt_tp209:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: 2.0.9
+      gate: {name: adaptive}
+      paths: *id003
+    python: tabpfn209
+  best_exp_const_tp209:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: 2.0.9
+      gate: {name: constant}
+      paths: &id004
+      - {name: explore, weight: 1.0}
+      - {name: margin, weight: 1.0, margin: 0.8}
+    python: tabpfn209
+  best_exp_adapt_tp209:
+    files: [conf/best.yaml]
+    set:
+      teacher.version: 2.0.9
+      gate: {name: adaptive}
+      paths: *id004
+    python: tabpfn209

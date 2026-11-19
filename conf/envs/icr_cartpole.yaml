@@ -1,0 +1,8 @@
+# ICR-RL setting, CartPole (the user's notebook Phase_A_TabQL_ICR_RL_Reproduction.ipynb, ICR suite): training reward
+# 2 - |x|/2.4 - |theta|/12deg (ICR-RL App. B.2.3), SB3 DQN of the notebook: lr 5e-4, [64, 64], batch 64, target update
+# 500, 1 update per step, epsilon 0.95 -> 0.1 over 10% of the budget, learning_starts 100, buffer = whole run, Huber
+# loss, grad-norm clip 10. Evaluation in original reward (500 = max).
+env: {id: CartPole-v1, reward: icr_rl}
+train: {total_steps: 50000, eval_every: 500}
+student: {hidden: [64, 64], lr: 0.0005, batch_size: 64, buffer_size: 50000, learning_starts: 100,
+          target_update: 500, eps_start: 0.95, eps_end: 0.1, eps_decay_steps: 5000}

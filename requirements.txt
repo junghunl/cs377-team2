@@ -1,0 +1,11 @@
+# Python 3.11. torch with CUDA 12.4: pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+Box2D==2.3.10
+gymnasium==1.4.0
+matplotlib==3.11.2
+numpy==2.4.6
+pandas==2.3.3
+PyYAML==6.0.3
+scipy==1.17.1
+tabpfn==9.2.0
+tabulate==0.10.0
+torch==2.6.0+cu124

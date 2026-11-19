@@ -1,0 +1,6 @@
+# ICR-RL setting, MountainCar (not in the notebook -> ICR-RL paper App. B): training reward progress + 10|v| - 1
+# (App. B.2), the same SB3 DQN as the notebook's CartPole. Evaluation in original reward (-200 = goal not reached).
+env: {id: MountainCar-v0, reward: icr_rl, target_return: -110}
+train: {total_steps: 50000, eval_every: 500}
+student: {hidden: [64, 64], lr: 0.0005, batch_size: 64, buffer_size: 50000, learning_starts: 100,
+          target_update: 500, eps_start: 0.95, eps_end: 0.1, eps_decay_steps: 5000}

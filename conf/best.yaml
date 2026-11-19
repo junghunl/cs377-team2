@@ -1,0 +1,17 @@
+# best = double rmix K=10 warm margin clip. Every part can be switched off for ablations:
+#   double  : label.double=false          (one TabPFN, max target)
+#   rmix    : context.random_frac=0       (recent good episodes only)
+#   K       : label.k=1 ...
+#   warm    : label.warm_start=false      (every refit restarts from fit(r))
+#   clip    : label.clip=false
+#   margin  : paths=[] (no transfer) or paths=[{name: mse, weight: 0.1}] / [{name: kl}]
+# option (not in best) + explore : paths=[{name: explore, weight: 1.0}, {name: margin, weight: 1.0, margin: 0.8}]
+# Other options: label={name: dqn} (TabQL labels), context={name: random}, refit={name: episode},
+#   gate={name: adaptive | linear | exp}, paths [{name: dagger}], teacher.version=2.0.9 (needs the 2.0.9 Python).
+teacher: {enabled: true, version: "3.5", n_estimators: 1, warmup_episodes: 3}
+context: {name: recent, size: 2000, quantile: 0.95, random_frac: 0.5}
+label: {name: fqi, k: 10, double: true, warm_start: true, clip: true}
+refit: {name: transition, every: 500}
+gate: {name: constant}
+paths:
+  - {name: margin, weight: 1.0, margin: 0.8}
