@@ -133,8 +133,8 @@ python main.py $B --run-dir results/abl/tabql      "label={name: dqn}" "context=
 | config | environment | budget | notes |
 |---|---|---|---|
 | `conf/envs/icr_cartpole.yaml` | CartPole-v1 | 50k | ICR-RL dense training reward `2 - \|x\|/2.4 - \|θ\|/12°`, SB3-style DQN |
-| `conf/envs/icr_mountaincar.yaml` | MountainCar-v0 | 50k | ICR-RL reward: progress + 10\|v\| - 1 |
-| `conf/envs/icr_acrobot.yaml` | Acrobot-v1 | 150k | ICR-RL reward: tip height |
+| `conf/envs/icr_mountaincar.yaml` | MountainCar-v0 | 150k | ICR-RL reward: progress + 10\|v\| - 1 |
+| `conf/envs/icr_acrobot.yaml` | Acrobot-v1 | 50k | ICR-RL reward: tip height |
 | `conf/envs/lunarlander.yaml` | LunarLander-v3 | 100k | original reward, DQN hyperparameters of rl-baselines3-zoo |
 
 Any gymnasium environment with a vector observation and discrete actions works: copy one of these files and change

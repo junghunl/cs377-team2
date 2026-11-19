@@ -1,14 +1,14 @@
 # Final experiments (2026-11-19, user, after the team meeting): seeds 0-9.
-#   envs      : ICR-RL CartPole 50k, ICR-RL MountainCar 50k, ICR-RL Acrobot 150k, LunarLander 100k (rl-zoo DQN)
+#   envs      : ICR-RL CartPole 50k, ICR-RL MountainCar 150k, ICR-RL Acrobot 50k, LunarLander 100k (rl-zoo DQN)
 #   algorithms: DQN | best (double rmix K=10 warm margin clip) | best + explore (teacher action on epsilon steps)
 #   gating    : constant | adaptive (check every 5% of the budget, 5 episodes each, strict student > teacher,
 #               g *= 0.5 per pass, off after 3 passes in a row, no t_max cap)
 #   TabPFN    : 3.5 (tabpfn 9.2.0) for every variant; 2.0.9 (pip tabpfn==2.0.9, conda env tabpfn209) for best constant only
 # Student = plain DQN everywhere. Results: results/final/<env>/<variant>/s<seed>.
-# Split over two servers: final_a.yaml (CartPole, Acrobot) and final_b.yaml (MountainCar, LunarLander).
+# Split over two servers: final_a.yaml (CartPole, MountainCar) and final_b.yaml (Acrobot, LunarLander).
 name: final
 seeds: 0-9
-envs: [conf/envs/icr_mountaincar.yaml, conf/envs/lunarlander.yaml]
+envs: [conf/envs/icr_acrobot.yaml, conf/envs/lunarlander.yaml]
 variants:
   dqn:
     files: []
