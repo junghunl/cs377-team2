@@ -18,6 +18,8 @@ import argparse
 import os
 import subprocess
 import sys
+import threading
+import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -55,15 +57,41 @@ def jobs_of(sw, seeds):
     return jobs
 
 
-def run(job, threads):
+def live_runs():
+    """Run dirs of main.py processes alive on this machine (also ones started by an earlier sweep)."""
+    dirs = set()
+    for p in Path("/proc").glob("[0-9]*/cmdline"):
+        try:
+            a = p.read_bytes().split(b"\0")
+        except OSError:
+            continue
+        if any(x.endswith(b"main.py") for x in a) and b"--run-dir" in a[:-1]:
+            dirs.add(a[a.index(b"--run-dir") + 1].decode())
+    return dirs
+
+
+LAUNCH = threading.Lock()
+
+
+def run(job, threads, workers):
     run_dir, exe, args = job
     if (run_dir / "summary.json").exists():
         return "skip", run_dir
-    run_dir.mkdir(parents=True, exist_ok=True)
     env = {**os.environ, "OMP_NUM_THREADS": str(threads), "MKL_NUM_THREADS": str(threads)}
-    with open(run_dir / "log.txt", "w") as log:
-        rc = subprocess.run([exe, str(ROOT / "main.py"), "--run-dir", str(run_dir), *args],
-                            stdout=log, stderr=subprocess.STDOUT, cwd=ROOT, env=env).returncode
+    with LAUNCH:  # at most `workers` runs alive in total, so GPU memory holds even next to leftover runs
+        while True:
+            live = live_runs()
+            if str(run_dir) in live:
+                return "running", run_dir  # started elsewhere; it finishes on its own
+            if len(live) < workers:
+                break
+            time.sleep(30)
+        run_dir.mkdir(parents=True, exist_ok=True)
+        log = open(run_dir / "log.txt", "w")
+        proc = subprocess.Popen([exe, str(ROOT / "main.py"), "--run-dir", str(run_dir), *args],
+                                stdout=log, stderr=subprocess.STDOUT, cwd=ROOT, env=env)
+    rc = proc.wait()
+    log.close()
     return ("ok" if rc == 0 else f"FAIL rc={rc}"), run_dir
 
 
@@ -83,7 +111,7 @@ def main():
         return
     threads = max(1, (os.cpu_count() or 1) // a.workers)
     with ThreadPoolExecutor(a.workers) as ex:
-        for i, (status, d) in enumerate(ex.map(lambda j: run(j, threads), jobs), 1):
+        for i, (status, d) in enumerate(ex.map(lambda j: run(j, threads, a.workers), jobs), 1):
             print(f"[{i}/{len(jobs)}] {status:10s} {d.relative_to(ROOT / 'results')}", flush=True)
 
 

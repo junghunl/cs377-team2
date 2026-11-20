@@ -25,20 +25,21 @@ variants:
       teacher.version: '3.5'
       gate: {name: adaptive}
       paths: *id001
-  best_exp_const_tp35:
-    files: [conf/best.yaml]
-    set:
-      teacher.version: '3.5'
-      gate: {name: constant}
-      paths: &id002
-      - {name: explore, weight: 1.0}
-      - {name: margin, weight: 1.0, margin: 0.8}
-  best_exp_adapt_tp35:
-    files: [conf/best.yaml]
-    set:
-      teacher.version: '3.5'
-      gate: {name: adaptive}
-      paths: *id002
+  # best + explore skipped (user, 2026-11-21): best_exp_const_tp35 / best_exp_adapt_tp35
+  # best_exp_const_tp35:
+  #   files: [conf/best.yaml]
+  #   set:
+  #     teacher.version: '3.5'
+  #     gate: {name: constant}
+  #     paths: &id002
+  #     - {name: explore, weight: 1.0}
+  #     - {name: margin, weight: 1.0, margin: 0.8}
+  # best_exp_adapt_tp35:
+  #   files: [conf/best.yaml]
+  #   set:
+  #     teacher.version: '3.5'
+  #     gate: {name: adaptive}
+  #     paths: *id002
   best_const_tp209:
     files: [conf/best.yaml]
     set:
